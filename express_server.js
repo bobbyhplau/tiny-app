@@ -7,9 +7,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const generateRandomString = function() {
 
-    // base 36 is all arabic numerals and all latin alphabets
+    let charSet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    let randomNum = function() {
+        return Math.floor(Math.random() * charSet.length);
+    };
 
-    return Math.random().toString(36)
+    let randomStr = ""
+
+    for (let i = 0; i < 6; i++) {
+        randomStr += charSet.charAt(randomNum());
+    }
+
+    return randomStr;
 }
 
 app.set('view engine', 'ejs');
@@ -51,6 +60,11 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-    console.log(req.body);
-    res.send("Ok");
+    let randomString = generateRandomString();
+    urlDatabase[randomString] = req.body.longURL;
+    res.redirect(`/urls/${randomString}`);
+});
+
+app.get('/u/:shortURL', (req, res) => {
+    res.redirect(urlDatabase[req.params.shortURL]);
 });
