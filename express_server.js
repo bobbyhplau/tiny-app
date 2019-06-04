@@ -8,9 +8,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const generateRandomString = function() {
 
     let charSet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-    let randomNum = function() {
-        return Math.floor(Math.random() * charSet.length);
-    };
+    let randomNum = () =>
+        Math.floor(Math.random() * charSet.length);
 
     let randomStr = ""
 
