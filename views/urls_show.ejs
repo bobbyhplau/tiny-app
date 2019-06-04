@@ -7,18 +7,19 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <title>TinyApp</title>
-    <% include ./partials/_header.ejs %>
 </head>
 
 <body style="font-size:20px; padding:50px;">
-<header>
-    <% include ./partials/_header.ejs %>
-</header>
-    <h1>Your Short URLS</h1>
+    <header>
+        <% include ./partials/_header.ejs %>
+    </header>
+    <br>
+    <h3><b>TinyUR for
+            <%= `${longURL}`%></b></h3>
     <% if (shortURL) {%>
-    <h3>
-        <%= `${shortURL} | ${longURL}`%>
-    </h3>
+    <h4>
+        <%= `${shortURL}`%>
+    </h4>
     <% }%>
 </body>
 
