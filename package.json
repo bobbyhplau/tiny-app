@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/bobbyhplau/tiny-app/issues"
   },
-  "homepage": "https://github.com/bobbyhplau/tiny-app#readme"
+  "homepage": "https://github.com/bobbyhplau/tiny-app#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
