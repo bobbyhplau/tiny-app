@@ -47,9 +47,13 @@
             <h5>
                 <% for (let i in urls) { %>
                 <% let dUrl = `/urls/${i}/delete`%>
-                <form method='POST' action='<%= dUrl%>'>
+                <% let eUrl = `/urls/${i}`%>
+                <a href='<%= eUrl%>'>Edit</a>
+                &nbsp;&nbsp;&nbsp;
+                <form style='display:inline-block' method='POST' action='<%= dUrl%>'>
                     <button type='submit'>Delete 🗑</button>
                 </form>
+                <br>
                 <% }%>
             </h5>
         </div>

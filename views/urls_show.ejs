@@ -15,12 +15,20 @@
         <a href="http://localhost:8080/urls/new">Create New TinyURL</a>
     </header>
     <br>
-    <h3><b>TinyURL for
-            <%= `${longURL}`%></b></h3>
+    <h3>ShortURL:
+        <% if (shortURL) {%>
+        <b>
+            <%= shortURL%></b>
+        <% }%>
+    </h3>
     <% if (shortURL) {%>
-    <h4>
-        <%= `${shortURL}`%>
-    </h4>
+    <% let eURL = `/urls/${shortURL}`%>
+    <form class="form-inline" action='<%= eURL%>' method="POST">
+        <div class="form-group mb-2">
+            <input class="form-control" type="text" name="longURL" placeholder="http://" value='<%= longURL%>' style="width: 300px"> &nbsp;
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+    </form>
     <% }%>
 </body>
 
