@@ -34,11 +34,11 @@
         <div style='float: center'>
             <h4>
                 <% for (let i in urls) {%>
-                :&nbsp
+                :&nbsp;
                 <a href='<%= urls[i]%>'>
                     <%= urls[i]%>
                 </a>
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <br>
                 <% }%>
             </h4>
@@ -46,8 +46,10 @@
         <div style='float: right'>
             <h5>
                 <% for (let i in urls) { %>
-                <button type='button'>Delete 🗑</button>
-                <br>
+                <% let dUrl = `/urls/${i}/delete`%>
+                <form method='POST' action='<%= dUrl%>'>
+                    <button type='submit'>Delete 🗑</button>
+                </form>
                 <% }%>
             </h5>
         </div>
