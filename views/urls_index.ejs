@@ -15,6 +15,7 @@
     </header>
     <br>
     <h3><b>My URLS</b></h3>
+    <% if (user) {%>
     <% if (urls) {%>
     <div class='row'>
         <div style='float: left'>
@@ -34,8 +35,8 @@
             <h4>
                 <% for (let i in urls) {%>
                 :&nbsp;
-                <a href='<%= urls[i]%>'>
-                    <%= urls[i]%>
+                <a href='<%= urls[i].longURL%>'>
+                    <%= urls[i].longURL%>
                 </a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <br>
@@ -57,6 +58,9 @@
             </h5>
         </div>
     </div>
+    <% } %>
+    <% } else {%>
+    <h5> Log in to start using TinyApp!!! </h5>
     <% }%>
 </body>
 
