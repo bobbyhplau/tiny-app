@@ -1,19 +1,20 @@
 <header>
   <h1>TinyApp</h1>
-  <% if (!(typeof username == 'undefined')) {%>
-      <form class='form-inline' action='/logout' method='POST'>
+  <% if (!(typeof user == 'undefined')) {%>
+
+      <div>
+          <a href= '/urls/'>URLS</a> | <a href= '/urls/new'>Create New TinyURL</a>
+      </div>
+      <form action='/logout' method='POST'>
+
           <div class='form-group mb-2'>
-              <label for="username">Logged In As: <%= username%></label> &nbsp;
+              <label for="user">Logged In As: <%= user.email%></label>
+              <br>
               <button type="submit" class="btn btn-primary">Logout</button>
           </div>
       </form>
   <% } else {%>
-      <form class="form-inline" action="/login" method="POST">
-          <div class="form-group mb-2">
-              <label for="username">Username:</label> &nbsp;
-              <input class="form-control" type="text" name="username" style="width: 200px;"> &nbsp;
-              <button type="submit" class="btn btn-primary">Login</button>
-          </div>
-      </form>
+
+      <a href= '/login/'>Login</a> | <a href= '/register/'>Register</a>
   <% };%>
 </header>
