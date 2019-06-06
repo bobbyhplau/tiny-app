@@ -42,6 +42,11 @@ const users = {
         id: "user2RandomID",
         email: "user2@example.com",
         password: "dishwasher-funk"
+    },
+    "myTestID": {
+        id: "myTestID",
+        email: "asdf@email.com",
+        password: "asdf"
     }
 }
 
@@ -118,7 +123,7 @@ app.get('/login', (req, res) => {
     let templateVars = {
         user: users[req.cookies['user_id']]
     }
-    res.clearCookie('user').render('login_index', templateVars);
+    res.clearCookie('user_id').render('login_index', templateVars);
 });
 
 app.get('/register', (req, res) => {
@@ -130,10 +135,21 @@ app.get('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
 
-    res.cookie('username', req.body.username);
-    res.cookie('password', req.body.username);
+    let tempEmail = req.body.email;
+    let tempPass = req.body.password;
 
-    res.redirect('/urls');
+    let checkUser = isEmailInUsers(users, tempEmail);
+    let checkPass = checkUser.password;
+
+    if (!(checkUser)) {
+        return res.status(403).send('Email not found');
+    }
+
+    if (tempPass !== checkPass) {
+        return res.status(403).send('Password incorrect');
+    }
+
+    res.cookie('user_id', checkUser.id).redirect('/urls');
 });
 
 app.post('/register', (req, res) => {
@@ -143,14 +159,13 @@ app.post('/register', (req, res) => {
     let tempPass = req.body.password;
 
     if (tempEmail === "" || tempPass === "") {
-        return res.status(400).send('E-mail and Password cannot be left blank');
+        return res.status(403).send('E-mail and Password cannot be left blank');
     }
 
     if (isEmailInUsers(users, tempEmail)) {
-        return res.status(400).send('Your e-mail is already registered with us!');
+        return res.status(403).send('Your e-mail is already registered with us!');
     }
 
     users[tempID] = { 'id': tempID, email: tempEmail, password: tempPass };
-
     res.cookie('user_id', tempID).redirect('/urls');
 });

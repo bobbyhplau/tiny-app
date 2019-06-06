@@ -1,9 +1,9 @@
-let isEmailInUsers = function(email, obj) {
+let isEmailInUsers = function(obj, em) {
 
     for (let i in obj) {
 
-        if (obj[i].email === email) {
-            return true;
+        if (obj[i].email === em) {
+            return obj[i];
         }
     }
 
