@@ -21,7 +21,7 @@
         <% }%>
     </h3>
     <% if (shortURL) {%>
-    <% let eURL = `/urls/${shortURL}`%>
+    <% let eURL = `/urls/${shortURL}?_method=PUT`%>
     <form class="form-inline" action='<%= eURL%>' method="POST">
         <div class="form-group mb-2">
             <input class="form-control" type="text" name="longURL" placeholder="http://" value='<%= longURL%>' style="width: 300px"> &nbsp;

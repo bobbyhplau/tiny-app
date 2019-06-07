@@ -46,7 +46,7 @@
         <div style='float: right'>
             <h5>
                 <% for (let i in urls) { %>
-                <% let dUrl = `/urls/${i}/delete`%>
+                <% let dUrl = `/urls/${i}?_method=DELETE`%>
                 <% let eUrl = `/urls/${i}`%>
                 <a href='<%= eUrl%>'>Edit</a>
                 &nbsp;&nbsp;&nbsp;
