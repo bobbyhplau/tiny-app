@@ -9,6 +9,7 @@ var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 const isEmailInUsers = require('./usersHelp').isEmailInUsers;
+const urlsForUser = require('./usersHelp').urlsForUser;
 
 const generateRandomString = function() {
 
@@ -28,9 +29,9 @@ const generateRandomString = function() {
 app.set('view engine', 'ejs');
 
 const urlDatabase = {
-    b6UTxQ: { longURL: "https://www.tsn.ca", userID: "myTestID2" },
-    i3BoGr: { longURL: "https://www.google.ca", userID: "myTestID" },
-    e33xs2: { longURL: "https://www.reddit.com", userID: "myTestID" }
+    test01: { longURL: "https://www.tsn.ca", userID: "myTestID2" },
+    test02: { longURL: "https://www.google.ca", userID: "myTestID" },
+    test03: { longURL: "https://www.reddit.com", userID: "myTestID" }
 };
 
 const users = {
@@ -77,9 +78,12 @@ app.get("/hello", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+
+    let tempID = req.cookies['user_id'];
+
     let templateVars = {
-        urls: urlDatabase,
-        user: users[req.cookies['user_id']]
+        urls: urlsForUser(urlDatabase, tempID),
+        user: users[tempID]
     };
     res.render('urls_index', templateVars);
 });
@@ -98,15 +102,30 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-    let templateVars = {
-        shortURL: req.params.shortURL,
-        longURL: urlDatabase[req.params.shortURL].longURL,
-        user: users[req.cookies['user_id']]
-    };
-    res.render('urls_show', templateVars);
+
+    let tempUser = users[req.cookies['user_id']];
+    let tempShortURL = req.params.shortURL;
+    let tempLongURL = urlDatabase[tempShortURL].longURL;
+
+    let templateVars = { user: tempUser };
+
+    if (tempUser.id === urlDatabase[tempShortURL].userID) {
+        templateVars.shortURL = tempShortURL;
+        templateVars.longURL = tempLongURL;
+
+        return res.render('urls_show', templateVars);
+    } else {
+        if (!(tempUser)) {
+            return res.status(403).render('login_index', templateVars);
+        } else {
+            return res.status(403).send('You don\'t have access to this shortURL');
+        }
+    }
 });
 
 app.post('/urls', (req, res) => {
+
+    console.log(req.cookies.user_id);
 
     if (!(req.cookies.user_id)) {
         return res.status(403).send('You need to be logged in to add a new URL');
@@ -122,11 +141,27 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
+
+    let tempShortURL = req.params.shortURL;
+    let tempUserID = req.cookies.user_id;
+
+    if (tempUserID !== urlDatabase[tempShortURL].userID) {
+        return res.status(403).send('You\'re not authorized to delete this shortURL');
+    }
+
     delete urlDatabase[req.params.shortURL];
     res.redirect('/urls');
 });
 
 app.post('/urls/:shortURL', (req, res) => {
+
+    let tempShortURL = req.params.shortURL;
+    let tempUserID = req.cookies.user_id;
+
+    if (tempUserID !== urlDatabase[tempShortURL].userID) {
+        return res.status(403).send('You\'re not authorized to edit this shortURL');
+    }
+
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
     res.redirect(`/urls/${req.params.shortURL}`);
 });
