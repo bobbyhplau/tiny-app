@@ -28,6 +28,32 @@
             <button type="submit" class="btn btn-primary">Update</button>
         </div>
     </form>
+    <br>
+    <br>
+    <br>
+    <div>
+        <% let uniqueVisits = unique;%>
+        <% let numVisits = visits.length;%>
+        <h4><%= numVisits%> Clicks &nbsp;&nbsp;&nbsp; <%=uniqueVisits%> Unique Visitors</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i = 0; i < numVisits; i++) {%>
+                    <tr>
+                        <th scope ="row"><%= i + 1%></th>
+                        <td><%= visits[i].date%></td>
+                        <td><%= visits[i].id%></td>
+                    </tr>
+                <%}%>
+            </tbody>
+        </table>
+    </div>
     <% }%>
 </body>
 

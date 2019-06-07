@@ -1,4 +1,4 @@
-let isEmailInUsers = function(obj, em) {
+const isEmailInUsers = function(obj, em) {
 
     for (let i in obj) {
 
@@ -10,7 +10,7 @@ let isEmailInUsers = function(obj, em) {
     return false;
 }
 
-let urlsForUser = function(obj, id) {
+const urlsForUser = function(obj, id) {
 
     let newObj = {};
 

@@ -5,7 +5,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1hour
+const expiryDate = new Date(Date.now() + 60 * 60 * 1000 * 72) // 72 hour
 
 const cookieSession = require('cookie-session');
 app.use(cookieSession({
@@ -22,6 +22,7 @@ app.use(cookieSession({
 
 const isEmailInUsers = require('./usersHelp').isEmailInUsers;
 const urlsForUser = require('./usersHelp').urlsForUser;
+const countUnique = require('./visitsHelp').countUnique;
 
 const bcrypt = require('bcrypt');
 const salt = 'ppd';
@@ -46,10 +47,12 @@ const generateRandomString = function() {
 
 app.set('view engine', 'ejs');
 
+const sampleDate = new Date('December 31, 1999 11:59:59');
+
 const urlDatabase = {
-    test01: { longURL: "https://www.tsn.ca", userID: "myTestID2" },
-    test02: { longURL: "https://www.google.ca", userID: "myTestID" },
-    test03: { longURL: "https://www.reddit.com", userID: "myTestID" }
+    test01: { longURL: "https://www.tsn.ca", userID: "myTestID2", visits: [] },
+    test02: { longURL: "https://www.google.ca", userID: "myTestID", visits: [{ date: sampleDate, id: 'visiID' }] },
+    test03: { longURL: "https://www.reddit.com", userID: "myTestID", visits: [] }
 };
 
 const users = {
@@ -114,8 +117,9 @@ app.get('/urls/:shortURL', (req, res) => {
     let tempUser = users[req.session['user_id']];
     let tempShortURL = req.params.shortURL;
     let tempLongURL = urlDatabase[tempShortURL].longURL;
+    let uniqueVisits = countUnique(urlDatabase[tempShortURL].visits);
 
-    let templateVars = { user: tempUser };
+    let templateVars = { user: tempUser, visits: urlDatabase[tempShortURL].visits, unique: uniqueVisits };
 
     if (!(tempUser)) {
         return res.status(403).render('login_index', templateVars);
@@ -147,7 +151,25 @@ app.post('/urls', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
-    res.redirect(urlDatabase[req.params.shortURL].longURL);
+
+    let currentDate = Date(Date.now());
+
+    if (!(req.session.visitor_id)) {
+        req.session.visitor_id = generateRandomString();
+    }
+
+    let currentVisitor = req.session.visitor_id;
+    let visit = { date: currentDate, id: currentVisitor };
+    let tempShortURL = req.params.shortURL;
+
+    urlDatabase[tempShortURL].visits.push(visit);
+
+    res.redirect(urlDatabase[tempShortURL].longURL);
+});
+
+app.get('/killVID', (req, res) => {
+    req.session.visitor_id = null;
+    res.redirect('/urls')
 });
 
 //should use delete
