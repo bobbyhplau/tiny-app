@@ -9,6 +9,11 @@ TinyApp also allows you to monitor your social media reach by tracking clicks to
 !["Registration Page"](https://github.com/bobbyhplau/tiny-app/blob/master/docs/newurl-page.png?raw=true)
 You can use the shortened links even if you're not logged in. But to make a new one or manipulate any existing ones, you must be register and be logged in.
 
+![](https://github.com/bobbyhplau/tiny-app/blob/master/docs/register-page.png?raw=true)
+
+![](https://github.com/bobbyhplau/tiny-app/blob/master/docs/shorturl-page.png?raw=true)
+
+![](https://github.com/bobbyhplau/tiny-app/blob/master/docs/urls-page.png?raw=true)
 ## Dependencies
 
 - Node.js
