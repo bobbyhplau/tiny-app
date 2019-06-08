@@ -5,7 +5,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const expiryDate = new Date(Date.now() + 60 * 60 * 1000 * 72) // 72 hour
+const expiryDate = new Date(Date.now() + 60 * 60 * 1000 * 72); // 72 hour
 
 const cookieSession = require('cookie-session');
 app.use(cookieSession({
@@ -33,11 +33,11 @@ app.use(methodOverride('_method'));
 
 const generateRandomString = function() {
 
-    let charSet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    const charSet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let randomNum = () =>
         Math.floor(Math.random() * charSet.length);
 
-    let randomStr = ""
+    let randomStr = "";
 
     for (let i = 0; i < 6; i++) {
         randomStr += charSet.charAt(randomNum());
@@ -48,11 +48,9 @@ const generateRandomString = function() {
 
 app.set('view engine', 'ejs');
 
-const sampleDate = new Date('December 31, 1999 11:59:59');
-
 const urlDatabase = {
     test01: { longURL: "https://www.tsn.ca", userID: "myTestID2", visits: [] },
-    test02: { longURL: "https://www.google.ca", userID: "myTestID", visits: [{ date: sampleDate, id: 'visiID' }] },
+    test02: { longURL: "https://www.google.ca", userID: "myTestID", visits: [] },
     test03: { longURL: "https://www.reddit.com", userID: "myTestID", visits: [] }
 };
 
@@ -67,10 +65,15 @@ const users = {
         email: "asdf1@email.com",
         password: bcrypt.hashSync("asdf1" + salt, 10)
     }
-}
+};
 
 app.get("/", (req, res) => {
-    res.redirect('/urls');
+
+    if (req.session['user_id']) {
+        return res.redirect('/urls');
+    }
+
+    return res.redirect('/login');
 });
 
 app.listen(PORT, () => {
@@ -101,7 +104,7 @@ app.get('/urls/new', (req, res) => {
     if (templateVars.user) {
         res.render('urls_new', templateVars);
     } else {
-        res.render('login_index', templateVars);
+        res.redirect('/login');
     }
 });
 
@@ -133,7 +136,7 @@ app.get('/urls/:shortURL', (req, res) => {
             return res.render('urls_show', templateVars);
         } else {
             templateVars.code = 403;
-            templateVars.message = "This isn't your ShortURL!"
+            templateVars.message = "This isn't your ShortURL!";
             return res.status(403).render('error_index', templateVars);
         }
     }
@@ -150,14 +153,14 @@ app.post('/urls', (req, res) => {
         longURL: req.body.longURL,
         userID: req.session.user_id,
         visits: []
-    }
+    };
     urlDatabase[randomString].longURL = req.body.longURL;
     res.redirect(`/urls/${randomString}`);
 });
 
 app.get('/u/:shortURL', (req, res) => {
 
-    let templateVars = { user: users[req.session.user_id] }
+    let templateVars = { user: users[req.session.user_id] };
     let tempShortURL = req.params.shortURL;
 
     if (!(isShortURLInURL(urlDatabase, tempShortURL))) {
@@ -183,7 +186,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 app.get('/killVID', (req, res) => {
     req.session.visitor_id = null;
-    res.redirect('/urls')
+    res.redirect('/urls');
 });
 
 //should use delete
@@ -223,7 +226,7 @@ app.get('/login', (req, res) => {
         user: users[req.session['user_id']],
         passMess: "",
         tempEmail: ""
-    }
+    };
     req.session = null;
     res.render('login_index', templateVars);
 });
@@ -233,7 +236,7 @@ app.get('/register', (req, res) => {
         user: users[req.session.user_id],
         tempEmail: "",
         passMess: ""
-    }
+    };
     req.session = null;
     res.render('register_index', templateVars);
 });
@@ -251,7 +254,7 @@ app.post('/login', (req, res) => {
             user: users[req.session.user_id],
             passMess: "The login information you've submitted doesn't match what we have on our end.",
             tempEmail: tempEmail
-        }
+        };
         return res.status(403).render('login_index', templateVars);
     }
 
@@ -270,7 +273,7 @@ app.post('/register', (req, res) => {
             user: users[req.session.user_id],
             passMess: "E-mail and Password cannot be left blank.",
             tempEmail: tempEmail
-        }
+        };
         return res.status(403).render('register_index', templateVars);
     }
 
@@ -279,7 +282,7 @@ app.post('/register', (req, res) => {
             user: users[req.session.user_id],
             passMess: "Your e-mail is already registered with us!",
             tempEmail: tempEmail
-        }
+        };
         return res.status(403).render('register_index', templateVars);
     }
 
