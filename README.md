@@ -6,7 +6,8 @@ TinyApp also allows you to monitor your social media reach by tracking clicks to
 
 ## Final Product
 
-!["You can use the shortened links even if you're not logged in. But to make a new one or manipulate any existing ones, you must be register and be logged in."](https://github.com/bobbyhplau/tiny-app/blob/master/docs/newurl-page.png?raw=true)
+!["Registration Page"](https://github.com/bobbyhplau/tiny-app/blob/master/docs/newurl-page.png?raw=true)
+You can use the shortened links even if you're not logged in. But to make a new one or manipulate any existing ones, you must be register and be logged in.
 
 ## Dependencies
 
