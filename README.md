@@ -9,7 +9,7 @@ TinyApp also allows you to monitor your social media reach by tracking clicks to
 !["Registration Page"](https://github.com/bobbyhplau/tiny-app/blob/master/docs/register-page.png?raw=true)
 You can use the shortened links even if you're not logged in. But to make a new one or manipulate any existing ones, you must be register and be logged in.
 
-![URLs Profile Page](https://github.com/bobbyhplau/tiny-app/blob/master/docs/urls-page.png?raw=true)
+!["URLs Profile Page"](https://github.com/bobbyhplau/tiny-app/blob/master/docs/urls-page.png?raw=true)
 Once you're logged in, you can access any of your created links. You are also free to edit any of them to change where they link to, or delete them if you wish.
 
 !["Create a new URL"](https://github.com/bobbyhplau/tiny-app/blob/master/docs/newurl-page.png?raw=true)
