@@ -22,7 +22,8 @@ app.use(cookieSession({
 
 const isEmailInUsers = require('./usersHelp').isEmailInUsers;
 const urlsForUser = require('./usersHelp').urlsForUser;
-const countUnique = require('./visitsHelp').countUnique;
+const countUnique = require('./urlHelp').countUnique;
+const isShortURLInURL = require('./urlHelp').isShortURLInURL;
 
 const bcrypt = require('bcrypt');
 const salt = 'ppd';
@@ -107,11 +108,18 @@ app.get('/urls/new', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
 
     let tempUser = users[req.session['user_id']];
+    let templateVars = { user: tempUser };
     let tempShortURL = req.params.shortURL;
+
+    if (!(isShortURLInURL(urlDatabase, tempShortURL))) {
+
+        templateVars.code = 404;
+        templateVars.message = "Not found.";
+        return res.status(404).render('error_index', templateVars);
+    }
+
     let tempLongURL = urlDatabase[tempShortURL].longURL;
     let uniqueVisits = countUnique(urlDatabase[tempShortURL].visits);
-
-    let templateVars = { user: tempUser };
 
     if (!(tempUser)) {
         return res.status(403).redirect('/login');
@@ -149,6 +157,16 @@ app.post('/urls', (req, res) => {
 
 app.get('/u/:shortURL', (req, res) => {
 
+    let templateVars = { user: users[req.session.user_id] }
+    let tempShortURL = req.params.shortURL;
+
+    if (!(isShortURLInURL(urlDatabase, tempShortURL))) {
+
+        templateVars.code = 404;
+        templateVars.message = "Not found.";
+        return res.status(404).render('error_index', templateVars);
+    }
+
     let currentDate = Date(Date.now());
 
     if (!(req.session.visitor_id)) {
@@ -157,7 +175,6 @@ app.get('/u/:shortURL', (req, res) => {
 
     let currentVisitor = req.session.visitor_id;
     let visit = { date: currentDate, id: currentVisitor };
-    let tempShortURL = req.params.shortURL;
 
     urlDatabase[tempShortURL].visits.push(visit);
 
