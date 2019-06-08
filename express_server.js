@@ -69,7 +69,7 @@ const users = {
 }
 
 app.get("/", (req, res) => {
-    res.send("Hello!");
+    res.redirect('/urls');
 });
 
 app.listen(PORT, () => {
@@ -78,14 +78,6 @@ app.listen(PORT, () => {
 
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-    let templateVars = {
-        greeting: 'Hello World!',
-        user: users[req.session['user_id']]
-    };
-    res.render("hello_world", templateVars);
 });
 
 app.get('/urls', (req, res) => {
@@ -119,18 +111,22 @@ app.get('/urls/:shortURL', (req, res) => {
     let tempLongURL = urlDatabase[tempShortURL].longURL;
     let uniqueVisits = countUnique(urlDatabase[tempShortURL].visits);
 
-    let templateVars = { user: tempUser, visits: urlDatabase[tempShortURL].visits, unique: uniqueVisits };
+    let templateVars = { user: tempUser };
 
     if (!(tempUser)) {
-        return res.status(403).render('login_index', templateVars);
+        return res.status(403).redirect('/login');
     } else {
         if (tempUser.id === urlDatabase[tempShortURL].userID) {
             templateVars.shortURL = tempShortURL;
             templateVars.longURL = tempLongURL;
+            templateVars.visits = urlDatabase[tempShortURL].visits;
+            templateVars.unique = uniqueVisits;
 
             return res.render('urls_show', templateVars);
         } else {
-            return res.status(403).send('You don\'t have access to this shortURL');
+            templateVars.code = 403;
+            templateVars.message = "This isn't your ShortURL!"
+            return res.status(403).render('error_index', templateVars);
         }
     }
 });
@@ -144,7 +140,8 @@ app.post('/urls', (req, res) => {
     let randomString = generateRandomString();
     urlDatabase[randomString] = {
         longURL: req.body.longURL,
-        userID: req.session.user_id
+        userID: req.session.user_id,
+        visits: []
     }
     urlDatabase[randomString].longURL = req.body.longURL;
     res.redirect(`/urls/${randomString}`);
@@ -206,7 +203,9 @@ app.post('/logout', (req, res) => {
 
 app.get('/login', (req, res) => {
     let templateVars = {
-        user: users[req.session['user_id']]
+        user: users[req.session['user_id']],
+        passMess: "",
+        tempEmail: ""
     }
     req.session = null;
     res.render('login_index', templateVars);
@@ -214,7 +213,9 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
     let templateVars = {
-        user: users[req.session.user_id]
+        user: users[req.session.user_id],
+        tempEmail: "",
+        passMess: ""
     }
     req.session = null;
     res.render('register_index', templateVars);
@@ -228,12 +229,13 @@ app.post('/login', (req, res) => {
     let checkUser = isEmailInUsers(users, tempEmail);
     let checkPass = checkUser.password;
 
-    if (!(checkUser)) {
-        return res.status(403).send('Email not found');
-    }
-
-    if (!(bcrypt.compareSync(tempPass + salt, checkPass))) {
-        return res.status(403).send('Password incorrect');
+    if ((!(checkUser)) || (!(bcrypt.compareSync(tempPass + salt, checkPass)))) {
+        let templateVars = {
+            user: users[req.session.user_id],
+            passMess: "The login information you've submitted doesn't match what we have on our end.",
+            tempEmail: tempEmail
+        }
+        return res.status(403).render('login_index', templateVars);
     }
 
     req.session.user_id = checkUser.id;
@@ -247,11 +249,21 @@ app.post('/register', (req, res) => {
     let tempPass = req.body.password;
 
     if (tempEmail === "" || tempPass === "") {
-        return res.status(403).send('E-mail and Password cannot be left blank');
+        let templateVars = {
+            user: users[req.session.user_id],
+            passMess: "E-mail and Password cannot be left blank.",
+            tempEmail: tempEmail
+        }
+        return res.status(403).render('register_index', templateVars);
     }
 
     if (isEmailInUsers(users, tempEmail)) {
-        return res.status(403).send('Your e-mail is already registered with us!');
+        let templateVars = {
+            user: users[req.session.user_id],
+            passMess: "Your e-mail is already registered with us!",
+            tempEmail: tempEmail
+        }
+        return res.status(403).render('register_index', templateVars);
     }
 
     const hashedPassword = bcrypt.hashSync(tempPass + salt, 10);
